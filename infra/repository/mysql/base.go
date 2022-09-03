@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"go_web/domain/entity"
+	"go_web/domain/repository"
 	"go_web/errors"
 	"go_web/infra/repository/mysql/model"
 	"strings"
@@ -16,7 +17,13 @@ type baseRepo[M model.Model, E entity.Entity] struct {
 	db *gorm.DB
 }
 
-func (e *baseRepo[M, E]) create(params E) (*E, error) {
+func newBaseRepoImpl[M model.Model, E entity.Entity](db *gorm.DB) repository.BaseRepo[E] {
+	return &baseRepo[M, E]{
+		db: db,
+	}
+}
+
+func (e *baseRepo[M, E]) Create(params E) (*E, error) {
 	model := M{}
 	if err := copy(&model, &params); err != nil {
 		return nil, err
@@ -34,7 +41,7 @@ func (e *baseRepo[M, E]) create(params E) (*E, error) {
 	return &result, nil
 }
 
-func (e *baseRepo[M, E]) update(ID uint32, params E) (*E, error) {
+func (e *baseRepo[M, E]) Update(ID uint32, params E) (*E, error) {
 	model := M{}
 	if err := e.db.First(&model, ID).Error; err != nil {
 		return nil, err
@@ -56,7 +63,7 @@ func (e *baseRepo[M, E]) update(ID uint32, params E) (*E, error) {
 	return &result, nil
 }
 
-func (e *baseRepo[M, E]) findByID(ID uint32) (*E, error) {
+func (e *baseRepo[M, E]) FindByID(ID uint32) (*E, error) {
 	model := M{}
 	if err := e.db.First(&model, ID).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -73,7 +80,7 @@ func (e *baseRepo[M, E]) findByID(ID uint32) (*E, error) {
 	return &result, nil
 }
 
-func (e *baseRepo[M, E]) findByIDs(IDs []uint32) ([]E, error) {
+func (e *baseRepo[M, E]) FindByIDs(IDs []uint32) ([]E, error) {
 	models := []M{}
 	if err := e.db.Find(&models, IDs).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -90,7 +97,7 @@ func (e *baseRepo[M, E]) findByIDs(IDs []uint32) ([]E, error) {
 	return result, nil
 }
 
-func (e *baseRepo[M, E]) findOneByConds(conds string, params ...interface{}) (*E, error) {
+func (e *baseRepo[M, E]) FindOneByConds(conds string, params ...interface{}) (*E, error) {
 	if strings.Count(conds, "?") != len(params) {
 		return nil, invalidParam
 	}
@@ -110,7 +117,7 @@ func (e *baseRepo[M, E]) findOneByConds(conds string, params ...interface{}) (*E
 	return &result, nil
 }
 
-func (e *baseRepo[M, E]) findAllByConds(conds string, params ...interface{}) ([]E, error) {
+func (e *baseRepo[M, E]) FindAllByConds(conds string, params ...interface{}) ([]E, error) {
 	if strings.Count(conds, "?") != len(params) {
 		return nil, invalidParam
 	}
@@ -131,7 +138,7 @@ func (e *baseRepo[M, E]) findAllByConds(conds string, params ...interface{}) ([]
 	return result, nil
 }
 
-func (e *baseRepo[M, E]) countByConds(conds string, params ...interface{}) (int64, error) {
+func (e *baseRepo[M, E]) CountByConds(conds string, params ...interface{}) (int64, error) {
 	if strings.Count(conds, "?") != len(params) {
 		return 0, invalidParam
 	}
@@ -144,11 +151,11 @@ func (e *baseRepo[M, E]) countByConds(conds string, params ...interface{}) (int6
 	return count, nil
 }
 
-func (e *baseRepo[M, E]) deleteByID(ID uint32) error {
+func (e *baseRepo[M, E]) DeleteByID(ID uint32) error {
 	return e.db.Where("ID = ?", ID).Delete(&M{}).Error
 }
 
-func (e *baseRepo[M, E]) deleteByIDs(IDs []uint32) (int64, error) {
+func (e *baseRepo[M, E]) DeleteByIDs(IDs []uint32) (int64, error) {
 	result := e.db.Where("ID IN ?", IDs).Delete(&M{})
 	return result.RowsAffected, result.Error
 }

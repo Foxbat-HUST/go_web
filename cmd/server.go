@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"go_web/api/handler"
+	"go_web/config"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,19 +22,25 @@ var runServer = &cobra.Command{
 }
 
 type app struct {
-	db *gorm.DB
+	config *config.Config
+	db     *gorm.DB
 }
 
 func initServer() {
+	cfg := config.LoadConfig()
+	db := _initMysql(cfg)
 	app := app{
-		db: _initMysql(),
+		config: cfg,
+		db:     db,
 	}
 	_initRouter(app)
 }
 
-func _initMysql() *gorm.DB {
+func _initMysql(cfg *config.Config) *gorm.DB {
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	dsn := "user:123456@tcp(127.0.0.1:3306)/web?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		cfg.MysqlUser, cfg.MysqlPassword, cfg.MysqlHost, cfg.MysqlPort, cfg.MysqlDb)
+	fmt.Printf("dns: %s", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {

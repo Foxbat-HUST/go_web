@@ -1,0 +1,9 @@
+.vscode
+.vscode/*
+bin
+bin/*
+rest-client
+rest-client/*
+.dockerignore
+docker-compose.yml
+Dockerfile.dev

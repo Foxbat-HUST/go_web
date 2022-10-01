@@ -1,0 +1,6 @@
+FROM golang:1.18.5
+WORKDIR /app
+COPY ./script/* ./
+COPY . .
+RUN chmod +x ./wait-for-it.sh
+RUN go build -o /web-app

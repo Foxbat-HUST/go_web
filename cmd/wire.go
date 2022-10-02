@@ -1,9 +1,12 @@
-//go:build exclude
+//go:build wireinject
+// +build wireinject
 
 package cmd
 
 import (
+	"go_web/api/usecase/auth"
 	"go_web/api/usecase/user"
+	"go_web/config"
 	"go_web/domain/repository"
 	"go_web/domain/service"
 	"go_web/domain/service/implement"
@@ -25,6 +28,14 @@ func initUserService(db *gorm.DB) service.UserService {
 	wire.Build(
 		mysql.NewUserRepo,
 		implement.NewUserService,
+	)
+	return nil
+}
+
+func initAuthService(db *gorm.DB, cfg *config.Config) service.AuthService {
+	wire.Build(
+		mysql.NewUserRepo,
+		implement.NewAuthService,
 	)
 	return nil
 }
@@ -60,6 +71,16 @@ func initUcGetUser(db *gorm.DB) user.GetUser {
 	wire.Build(
 		initUserService,
 		user.NewGetUser,
+	)
+
+	return nil
+}
+
+func initUCLogin(db *gorm.DB, cfg *config.Config) auth.Login {
+	wire.Build(
+		initAuthService,
+		initUserService,
+		auth.NewLogin,
 	)
 
 	return nil

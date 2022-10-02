@@ -7,14 +7,27 @@ import (
 
 type User struct {
 	ID        uint32
-	Name      string `validate:"required"`
-	Age       uint16 `validate:"required"`
-	Email     string `validate:"required,email"`
+	Name      string   `validate:"required"`
+	Age       uint16   `validate:"required"`
+	Email     string   `validate:"required,email"`
+	Type      UserType `validate:"userType"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-func (u *User) Valid() error {
+type UserType string
+
+const (
+	UserTypeSuper  UserType = "super"
+	UserTypeAdmin  UserType = "admin"
+	UserTypeNormal UserType = "normal"
+)
+
+func (u UserType) IsValid() bool {
+	return u == UserTypeSuper || u == UserTypeAdmin || u == UserTypeNormal
+}
+
+func (u *User) Validate() error {
 	if err := validate.Struct(u); err != nil {
 		return errors.BadRequest(err)
 	}

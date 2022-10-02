@@ -16,3 +16,7 @@ func handleErr(ctx *gin.Context, e error) {
 		ctx.JSON(error.StatusCode, error.Error())
 	}
 }
+
+func setCookie(ctx *gin.Context, name, value string, age int) {
+	ctx.SetCookie(name, value, age, "", "", true, true)
+}

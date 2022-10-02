@@ -26,6 +26,9 @@ func (u *userServiceImpl) WithTx(tx *gorm.DB) service.UserService {
 		userRepo: u.userRepo.WithTx(tx),
 	}
 }
+func (u *userServiceImpl) GetByEmail(email string) (result *entity.User, err error) {
+	return u.userRepo.FindByEmail(email)
+}
 
 func (u *userServiceImpl) GetByID(ID uint32) (result *entity.User, err error) {
 	return u.userRepo.FindByID(ID)
@@ -43,7 +46,7 @@ func (u *userServiceImpl) Update(ID uint32, user entity.User) (result *entity.Us
 }
 
 func (u *userServiceImpl) ValidateCreate(user entity.User) error {
-	if err := user.Valid(); err != nil {
+	if err := user.Validate(); err != nil {
 		return err
 	}
 	count, err := u.userRepo.CountByEmail(user.Email)
@@ -57,7 +60,7 @@ func (u *userServiceImpl) ValidateCreate(user entity.User) error {
 }
 
 func (u *userServiceImpl) ValidateUpdate(user entity.User) error {
-	if err := user.Valid(); err != nil {
+	if err := user.Validate(); err != nil {
 		return err
 	}
 	count, err := u.userRepo.CountByEmailExcludeID(user.Email, user.ID)

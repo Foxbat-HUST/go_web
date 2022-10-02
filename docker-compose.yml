@@ -15,6 +15,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile.dev
+    ports:
+    - 8080:8080
     image: web-app
     depends_on:
       - mysql

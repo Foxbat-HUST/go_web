@@ -25,7 +25,9 @@ func Execute() error {
 func init() {
 	rootCmd.AddCommand(
 		runServer,
-		runMigrate)
+		runMigrate,
+		runHashPassword,
+	)
 }
 
 func ask(q string) bool {

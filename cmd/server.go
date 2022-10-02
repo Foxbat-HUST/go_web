@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"go_web/api/handler"
+	"go_web/api/middleware"
 	"go_web/config"
 	"net/http"
 
@@ -24,6 +25,17 @@ var runServer = &cobra.Command{
 type app struct {
 	config *config.Config
 	db     *gorm.DB
+}
+
+func (a app) CreateMiddleware(middlewareType middleware.MiddlewareType) func(*gin.Context) {
+	switch middlewareType {
+	case middleware.LoginMiddleware:
+		authService := initAuthService(a.db, a.config)
+		return middleware.NewLoginMiddleware(authService).Value()
+	default:
+		panic("un-support type")
+	}
+
 }
 
 func initServer() {
@@ -58,8 +70,14 @@ func _initRouter(app app) {
 			"message": "pong",
 		})
 	})
+	loginUc := initUCLogin(app.db, app.config)
+	auth := router.Group("/auth")
+	{
+		auth.POST("/login", handler.DoLogin(loginUc, app.config))
+	}
 	apiV1 := router.Group("/api/v1")
 	{
+		apiV1.Use(app.CreateMiddleware(middleware.LoginMiddleware))
 		userGrp := apiV1.Group("/users")
 		{
 			userGrp.POST("", handler.CreateUser(initUcCreateUser(app.db)))

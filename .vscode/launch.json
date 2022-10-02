@@ -11,7 +11,9 @@
             "request": "launch",
             "mode": "auto",
             "program": "${cwd}",
-            "args": ["server"]
+            "args": ["server"],
+            //"args": ["bcrypt", "-r=123456"],
+            "envFile": "${cwd}/debug.env"
         }
     ]
 }

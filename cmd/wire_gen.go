@@ -7,12 +7,18 @@
 package cmd
 
 import (
+	"go_web/api/usecase/auth"
 	"go_web/api/usecase/user"
+	"go_web/config"
 	"go_web/domain/repository"
 	"go_web/domain/service"
 	"go_web/domain/service/implement"
 	"go_web/infra/repository/mysql"
 	"gorm.io/gorm"
+)
+
+import (
+	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 )
 
 // Injectors from wire.go:
@@ -26,6 +32,12 @@ func initUserService(db *gorm.DB) service.UserService {
 	userRepo := mysql.NewUserRepo(db)
 	userService := implement.NewUserService(userRepo)
 	return userService
+}
+
+func initAuthService(db *gorm.DB, cfg *config.Config) service.AuthService {
+	userRepo := mysql.NewUserRepo(db)
+	authService := implement.NewAuthService(cfg, userRepo)
+	return authService
 }
 
 func initUcCreateUser(db *gorm.DB) user.CreateUser {
@@ -50,4 +62,11 @@ func initUcGetUser(db *gorm.DB) user.GetUser {
 	userService := initUserService(db)
 	getUser := user.NewGetUser(db, userService)
 	return getUser
+}
+
+func initUCLogin(db *gorm.DB, cfg *config.Config) auth.Login {
+	authService := initAuthService(db, cfg)
+	userService := initUserService(db)
+	login := auth.NewLogin(authService, userService)
+	return login
 }

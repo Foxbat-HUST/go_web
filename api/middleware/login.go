@@ -29,6 +29,7 @@ func (l loginMiddleware) Value() func(*gin.Context) {
 		user, err := l.authService.ParseToken(token)
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, err.Error())
+			ctx.Abort()
 			return
 		}
 		ctx.Set("authUser", user)

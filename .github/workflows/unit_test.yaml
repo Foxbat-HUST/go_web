@@ -16,6 +16,6 @@ jobs:
           cp ./sql/dump.sql ./sql/21001231001_dump.up.sql
           echo '' > ./sql/dump.sql ./sql/21001231001_dump.down.sql
       - name: migrate db
-        run:
+        run: |
           docker-compose up mysql
           docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' up 

@@ -20,7 +20,7 @@ jobs:
       - name: wait until mysql is ready
         run: |
           chmod +x ./script/wait-for-it.sh
-          ./script/wait-for-it.sh","mysql:3306","--timeout=60","--","echo","mysql is ready"
+          ./script/wait-for-it.sh mysql:3306 --timeout=60 -- echo 'mysql is ready'
       - name: migrate & seed data
         run: |
           docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' drop -f 

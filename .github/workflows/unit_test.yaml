@@ -4,6 +4,11 @@ on: [workflow_dispatch]
 jobs:
   go_test:
     runs-on: ubuntu-22.04
+    env:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASS: 123456
     steps:
       - name: checkout source code
         uses: actions/checkout@v3
@@ -20,8 +25,8 @@ jobs:
       - name: wait until mysql is ready
         run: |
           chmod +x ./script/wait-for-it.sh
-          ./script/wait-for-it.sh mysql:3306 --timeout=60 -- echo 'mysql is ready'
+          ./script/wait-for-it.sh $DB_HOST:$DB_PORT --timeout=60 -- echo 'mysql is ready'
       - name: migrate & seed data
         run: |
-          docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' drop -f 
-          docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' up 
+          docker-compose run db-migrate -verbose -path=/migrations/ -database "mysql://$DB_USER:$DB_PASS@tcp($DB_HOST:$DB_PORT)/web" drop -f 
+          docker-compose run db-migrate -verbose -path=/migrations/ -database "mysql://$DB_USER:$DB_PASS@tcp($DB_HOST:$DB_PORT)/web" up 

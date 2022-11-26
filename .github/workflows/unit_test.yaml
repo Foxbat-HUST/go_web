@@ -17,7 +17,7 @@ jobs:
           echo '' > ./sql/dump.sql ./sql/21001231001_dump.down.sql
       - name: drop all schemas
         run: |
-          docker-compose up mysql
+          docker-compose up -d mysql
           docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' drop -f 
       - name: run migrate & seed data
         run: docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' up 

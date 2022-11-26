@@ -8,10 +8,14 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v3
       
-      # - name: build docker
-      #   run: docker-compose build
-      - name: migrate & seed db
+      - name: build docker
+        run: docker-compose build
+
+      - name: prepare migrate script
         run: |
           cp ./sql/dump.sql ./sql/21001231001_dump.up.sql
           echo '' > ./sql/dump.sql ./sql/21001231001_dump.down.sql
-          ls ./sql
+      - name: migrate db
+        run:
+          docker-compose up mysql
+          docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' up 

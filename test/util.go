@@ -12,7 +12,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"go_web/infra/repository/mysql"
+	"gorm.io/driver/mysql"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -50,7 +50,7 @@ var actorMap = map[string]entity.User{
 }
 
 func createLoginMiddleware(app App) func(*gin.Context) {
-	userRepo := mysql.NewUserRepo(app.Db)
+	userRepo := repo.NewUserRepo(app.Db)
 	authService := implement.NewAuthService(app.Config, userRepo)
 
 	return middleware.NewLoginMiddleware(authService).Value()
@@ -155,7 +155,7 @@ func RunTest(t *testing.T, test TestData) {
 		router.ServeHTTP(w, request)
 
 		assert.Equal(t, item.ExpectedCode, w.Code, item.Name)
-		
+
 		if item.AssertFunc != nil {
 			item.AssertFunc(appWithTx, t, w)
 		}

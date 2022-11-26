@@ -1,0 +1,15 @@
+name: Run unit test
+run-name: Run go unit test by ${{github.actor}} on branch ${{github.ref_name}}
+on: [workflow_dispatch]
+jobs:
+  go_test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v3
+      
+      - name: build docker
+        run: docker-compose build
+      - name: migrate & seed db
+        run: ls
+

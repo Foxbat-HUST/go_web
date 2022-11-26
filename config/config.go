@@ -21,15 +21,29 @@ func LoadConfig() *Config {
 	return &cfg
 }
 
+type Auth struct {
+	Secret             string `mapstructure:"AUTH_SECRET"`
+	TokenExpireSeconds int    `mapstructure:"AUTH_TOKEN_EXPIRE_SECONDS"`
+	TokenIssuer        string `mapstructure:"AUTH_TOKEN_ISSUER"`
+}
 type Config struct {
-	// mysql db
-	MysqlHost     string `mapstructure:"MYSQL_HOST"`
-	MysqlPort     int    `mapstructure:"MYSQL_PORT"`
-	MysqlUser     string `mapstructure:"MYSQL_USER"`
-	MysqlPassword string `mapstructure:"MYSQL_PASSWORD"`
-	MysqlDb       string `mapstructure:"MYSQL_DB"`
-	// auth
-	AuthSecret             string `mapstructure:"AUTH_SECRET"`
-	AuthTokenExpireSeconds int    `mapstructure:"AUTH_TOKEN_EXPIRE_SECONDS"`
-	AuthTokenIssuer        string `mapstructure:"AUTH_TOKEN_ISSUER"`
+	Mysql struct {
+		Host     string `mapstructure:"MYSQL_HOST"`
+		Port     int    `mapstructure:"MYSQL_PORT"`
+		User     string `mapstructure:"MYSQL_USER"`
+		Password string `mapstructure:"MYSQL_PASSWORD"`
+		Db       string `mapstructure:"MYSQL_DB"`
+	} `mapstructure:",squash"`
+
+	Auth struct {
+		Secret             string `mapstructure:"AUTH_SECRET"`
+		TokenExpireSeconds int    `mapstructure:"AUTH_TOKEN_EXPIRE_SECONDS"`
+		TokenIssuer        string `mapstructure:"AUTH_TOKEN_ISSUER"`
+	} `mapstructure:",squash"`
+
+	Redis struct {
+		Host     string `mapstructure:"REDIS_HOST"`
+		Port     int    `mapstructure:"REDIS_PORT"`
+		Password string `mapstructure:"REDIS_PASSWORD"`
+	} `mapstructure:",squash"`
 }

@@ -21,7 +21,7 @@ func DoLogin(uc auth.Login, config *config.Config) func(ctx *gin.Context) {
 			return
 		}
 
-		setCookie(ctx, "Authenticate", output.Token, config.AuthTokenExpireSeconds)
+		setCookie(ctx, "Authenticate", output.Token, config.Auth.TokenExpireSeconds)
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "authenticated",
 		})

@@ -15,17 +15,17 @@ var runMigrate = &cobra.Command{
 	Use:   "migrate",
 	Short: "run migrate",
 	Long:  `Tbd`,
-	Run:   runMigate,
+	Run:   doMigrate,
 }
 
-func runMigate(cmd *cobra.Command, args []string) {
+func doMigrate(cmd *cobra.Command, args []string) {
 	d, err := iofs.New(sql.Fs, ".")
 	if err != nil {
 		cmd.Println(err)
 		return
 	}
 	cfg := config.LoadConfig()
-	dbUrl := fmt.Sprintf("mysql://%s:%s@tcp(%s:%d)/%s", cfg.MysqlUser, cfg.MysqlPassword, cfg.MysqlHost, cfg.MysqlPort, cfg.MysqlDb)
+	dbUrl := fmt.Sprintf("mysql://%s:%s@tcp(%s:%d)/%s", cfg.Mysql.User, cfg.Mysql.Password, cfg.Mysql.Host, cfg.Mysql.Port, cfg.Mysql.Db)
 	m, err := migrate.NewWithSourceInstance("iofs", d, dbUrl)
 	if err != nil {
 		cmd.Println(err)

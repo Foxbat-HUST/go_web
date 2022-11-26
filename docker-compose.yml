@@ -11,6 +11,12 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: user
       MYSQL_PASSWORD: 123456
+  db-migrate:
+    image: migrate/migrate:4
+    volumes:
+      - ./sql:/migrations
+    environment:
+      DB_URL: mysql://user:123456@tcp(mysql:3306)/web
   web-app:
     build:
       context: ./
@@ -23,3 +29,4 @@ services:
     env_file:
       - ./app.env
     entrypoint: ["./wait-for-it.sh","mysql:3306","--timeout=60","--","/web-app","server"]
+  

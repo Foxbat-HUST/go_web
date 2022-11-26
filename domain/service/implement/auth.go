@@ -48,20 +48,20 @@ func (a authServiceImpl) HashPassword(rawPassword string) (string, error) {
 	return string(hashPassword), err
 }
 func (a authServiceImpl) CreateToken(user entity.User) (string, error) {
-	expiredAt := time.Now().Add(time.Second * time.Duration(a.cfg.AuthTokenExpireSeconds))
+	expiredAt := time.Now().Add(time.Second * time.Duration(a.cfg.Auth.TokenExpireSeconds))
 	cml := claim{
 		UserId:    user.ID,
 		UserEmail: user.Email,
 		UserType:  user.Type,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    a.cfg.AuthTokenIssuer,
+			Issuer:    a.cfg.Auth.TokenIssuer,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			ExpiresAt: jwt.NewNumericDate(expiredAt),
 			ID:        uuid.New().String(),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, cml)
-	tokenStr, err := token.SignedString([]byte(a.cfg.AuthSecret))
+	tokenStr, err := token.SignedString([]byte(a.cfg.Auth.Secret))
 	if err != nil {
 		return "", err
 	}
@@ -75,7 +75,7 @@ func (a authServiceImpl) ParseToken(tokenStr string) (*entity.User, error) {
 			return nil, fmt.Errorf("unsupported token")
 		}
 
-		return []byte(a.cfg.AuthSecret), nil
+		return []byte(a.cfg.Auth.Secret), nil
 	})
 	if err != nil {
 		return nil, err

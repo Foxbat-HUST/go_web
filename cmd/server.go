@@ -51,7 +51,7 @@ func initServer() {
 func _initMysql(cfg *config.Config) *gorm.DB {
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.MysqlUser, cfg.MysqlPassword, cfg.MysqlHost, cfg.MysqlPort, cfg.MysqlDb)
+		cfg.Mysql.User, cfg.Mysql.Password, cfg.Mysql.Host, cfg.Mysql.Port, cfg.Mysql.Db)
 	fmt.Printf("dns: %s", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 

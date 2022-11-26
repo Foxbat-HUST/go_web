@@ -15,9 +15,13 @@ jobs:
         run: |
           cp ./sql/dump.sql ./sql/21001231001_dump.up.sql
           echo '' > ./sql/dump.sql ./sql/21001231001_dump.down.sql
-      - name: drop all schemas
+      - name: startup mysql
+        run: docker-compose up -d mysql
+      - name: wait until mysql is ready
         run: |
-          docker-compose up -d mysql
+          chmod +x .script/wait-for-it.sh
+          .script/wait-for-it.sh","mysql:3306","--timeout=60","--","echo","mysql is ready"
+      - name: migrate & seed data
+        run: |
           docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' drop -f 
-      - name: run migrate & seed data
-        run: docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' up 
+          docker-compose run db-migrate -verbose -path=/migrations/ -database 'mysql://user:123456@tcp(mysql:3306)/web' up 

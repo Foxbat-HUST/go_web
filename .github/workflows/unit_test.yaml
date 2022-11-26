@@ -8,8 +8,8 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v3
       
-      - name: build docker
-        run: docker-compose build
+      # - name: build docker
+      #   run: docker-compose build
 
       - name: prepare migrate script
         run: |

@@ -128,16 +128,12 @@ func RunTest(t *testing.T, test TestData) {
 	switch test.Method {
 	case GET:
 		group.GET(test.Url, test.Handler)
-		break
 	case Post:
 		group.POST(test.Url, test.Handler)
-		break
 	case Put:
 		group.PUT(test.Url, test.Handler)
-		break
 	case Delete:
 		group.DELETE(test.Url, test.Handler)
-		break
 	default:
 		panic(fmt.Sprintf("un-support http method: %s", test.Method))
 	}

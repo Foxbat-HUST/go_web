@@ -19,7 +19,7 @@ jobs:
         run: docker-compose up -d mysql
       - name: wait until mysql is ready
         run: |
-          chmod +x .script/wait-for-it.sh
+          chmod +x ./script/wait-for-it.sh
           .script/wait-for-it.sh","mysql:3306","--timeout=60","--","echo","mysql is ready"
       - name: migrate & seed data
         run: |

@@ -25,7 +25,7 @@ jobs:
       - name: wait until mysql is ready
         run: |
           chmod +x ./script/wait-for-it.sh
-          ./script/wait-for-it.sh $DB_HOST:$DB_PORT --timeout=60 -- echo 'mysql is ready'
+          ./script/wait-for-it.sh localhost:$DB_PORT --timeout=60 -- echo 'mysql is ready'
       - name: migrate & seed data
         run: |
           docker-compose run db-migrate -verbose -path=/migrations/ -database "mysql://$DB_USER:$DB_PASS@tcp($DB_HOST:$DB_PORT)/web" drop -f 

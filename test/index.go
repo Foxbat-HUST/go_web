@@ -21,7 +21,7 @@ import (
 )
 
 func GetApp() App {
-	cfg := config.LoadConfig()
+	cfg := config.LoadConfigForTest()
 	if cfg == nil {
 		panic("fail to load config")
 	}

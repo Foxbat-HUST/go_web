@@ -1,11 +1,15 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/spf13/viper"
 )
 
-func LoadConfig() *Config {
-	viper.AddConfigPath("./")
+func loadConfig(envFileLoc string) *Config {
+	viper.AddConfigPath(envFileLoc)
 	viper.SetConfigName("app")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
@@ -19,6 +23,23 @@ func LoadConfig() *Config {
 	}
 
 	return &cfg
+}
+func LoadConfig() *Config {
+	return loadConfig("./")
+}
+
+const rootDir = "go_web_be/"
+
+func LoadConfigForTest() *Config {
+
+	pwd, _ := os.Getwd()
+	index := strings.Index(pwd, rootDir)
+	if index < 0 {
+		panic(fmt.Sprintf("could not found env file for test at: %s", pwd))
+	}
+	envFileLoc := pwd[0 : index+len(rootDir)]
+
+	return loadConfig(envFileLoc)
 }
 
 type Auth struct {

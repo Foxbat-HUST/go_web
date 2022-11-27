@@ -46,6 +46,9 @@ var handlerFactorMap = map[string]map[Method]handlerSignature{
 		PUT:    handler.InitUpdateUserHandler,
 		DELETE: handler.InitDeleteUserHandler,
 	},
+	"/api/v1/users": {
+		POST: handler.InitCreateUserHandler,
+	},
 }
 
 func GetApp() App {

@@ -26,4 +26,4 @@ jobs:
           docker-compose run db-migrate -verbose -path=/migrations/ -database $DB_URL drop -f 
           docker-compose run db-migrate -verbose -path=/migrations/ -database $DB_URL up 
       - name: run unit test
-        run: docker-compose run --entrypoint 'go test ./...' web-app
+        run: docker-compose run --entrypoint 'go test ./test/...' web-app

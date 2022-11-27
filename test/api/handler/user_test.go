@@ -38,7 +38,7 @@ func TestGetUser(t *testing.T) {
 					assert.Equal(t, dbUser.Name, resUser.Name)
 					assert.Equal(t, dbUser.Age, resUser.Age)
 					assert.Equal(t, dbUser.Email, resUser.Email)
-					assert.Equal(t, entity.UserTypeNormal, resUser.Type)
+					assert.Equal(t, entity.UserTypeSuper, resUser.Type)
 				},
 			},
 		},

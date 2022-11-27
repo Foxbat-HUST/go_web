@@ -1,6 +1,6 @@
 name: Run unit test
 run-name: Run go unit test by ${{github.actor}} on branch ${{github.ref_name}}
-on: [workflow_dispatch]
+on: [workflow_dispatch, push]
 jobs:
   go_test:
     runs-on: ubuntu-22.04

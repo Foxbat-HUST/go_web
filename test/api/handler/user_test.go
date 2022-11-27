@@ -35,7 +35,10 @@ func TestGetUser(t *testing.T) {
 					if err != nil {
 						panic(fmt.Sprintf("could not find user with ID = %d from db", userId))
 					}
-					assert.Equal(t, *dbUser, resUser)
+					assert.Equal(t, dbUser.Name, resUser.Name)
+					assert.Equal(t, dbUser.Age, resUser.Age)
+					assert.Equal(t, dbUser.Email, resUser.Email)
+					assert.Equal(t, entity.UserTypeSuper, resUser.Type)
 				},
 			},
 		},

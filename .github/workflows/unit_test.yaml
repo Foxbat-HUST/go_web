@@ -8,8 +8,8 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v3
       
-      # - name: build docker
-      #   run: docker-compose build
+      - name: docker build
+        run: docker-compose build
 
       - name: prepare migrate script
         run: |
@@ -25,3 +25,5 @@ jobs:
         run: |
           docker-compose run db-migrate -verbose -path=/migrations/ -database $DB_URL drop -f 
           docker-compose run db-migrate -verbose -path=/migrations/ -database $DB_URL up 
+      - name: run unit test
+        run: docker-compose run --entrypoint 'go test ./...' web-app

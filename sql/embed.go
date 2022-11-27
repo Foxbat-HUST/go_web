@@ -2,6 +2,5 @@ package sql
 
 import "embed"
 
-//TODO
-//go:embed *.sql
+//go:embed 20221002001_update_table_user.up.sql
 var Fs embed.FS

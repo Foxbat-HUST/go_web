@@ -38,11 +38,12 @@ func (c *createUser) Exec(input CreateUserInput) (*CreateUserOuput, error) {
 		Name:  input.Name,
 		Age:   input.Age,
 		Email: input.Email,
+		Type:  entity.UserTypeNormal,
 	}
 	if err := c.userService.ValidateCreate(user); err != nil {
 		return nil, err
 	}
-	
+
 	var createdUser entity.User
 	if err := c.db.Transaction(func(tx *gorm.DB) error {
 		u, e := c.userService.WithTx(tx).Create(user)

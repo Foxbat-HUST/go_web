@@ -30,7 +30,7 @@ type app struct {
 func (a app) CreateMiddleware(middlewareType middleware.MiddlewareType) func(*gin.Context) {
 	switch middlewareType {
 	case middleware.LoginMiddleware:
-		authService := initAuthService(a.db, a.config)
+		authService := handler.InitAuthService(a.db, a.config)
 		return middleware.NewLoginMiddleware(authService).Value()
 	default:
 		panic("un-support type")
@@ -51,7 +51,7 @@ func initServer() {
 func _initMysql(cfg *config.Config) *gorm.DB {
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.MysqlUser, cfg.MysqlPassword, cfg.MysqlHost, cfg.MysqlPort, cfg.MysqlDb)
+		cfg.Mysql.User, cfg.Mysql.Password, cfg.Mysql.Host, cfg.Mysql.Port, cfg.Mysql.Db)
 	fmt.Printf("dns: %s", dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -70,20 +70,19 @@ func _initRouter(app app) {
 			"message": "pong",
 		})
 	})
-	loginUc := initUCLogin(app.db, app.config)
 	auth := router.Group("/auth")
 	{
-		auth.POST("/login", handler.DoLogin(loginUc, app.config))
+		auth.POST("/login", handler.InitLoginHandler(app.db, app.config))
 	}
 	apiV1 := router.Group("/api/v1")
 	{
 		apiV1.Use(app.CreateMiddleware(middleware.LoginMiddleware))
 		userGrp := apiV1.Group("/users")
 		{
-			userGrp.POST("", handler.CreateUser(initUcCreateUser(app.db)))
-			userGrp.PUT("/:id", handler.UpdateUser(initUcUpdateUser(app.db)))
-			userGrp.GET("/:id", handler.GetUser(initUcGetUser(app.db)))
-			userGrp.DELETE("/:id", handler.DeleteUser(initUcDeleteUser(app.db)))
+			userGrp.POST("", handler.InitCreateUserHandler(app.db, app.config))
+			userGrp.PUT("/:id", handler.InitUpdateUserHandler(app.db, app.config))
+			userGrp.GET("/:id", handler.InitGetUserHandler(app.db, app.config))
+			userGrp.DELETE("/:id", handler.InitDeleteUserHandler(app.db, app.config))
 		}
 	}
 	router.Run()

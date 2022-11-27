@@ -1,6 +1,6 @@
 name: Run unit test
 run-name: Run go unit test by ${{github.actor}} on branch ${{github.ref_name}}
-on: [workflow_dispatch]
+on: [workflow_dispatch, push]
 jobs:
   go_test:
     runs-on: ubuntu-22.04
@@ -8,10 +8,22 @@ jobs:
       - name: checkout source code
         uses: actions/checkout@v3
       
-      # - name: build docker
-      #   run: docker-compose build
-      - name: migrate & seed db
+      - name: docker build
+        run: docker-compose build
+
+      - name: prepare migrate script
         run: |
           cp ./sql/dump.sql ./sql/21001231001_dump.up.sql
           echo '' > ./sql/dump.sql ./sql/21001231001_dump.down.sql
-          ls ./sql
+      - name: startup mysql
+        run:  |
+          docker-compose up -d mysql
+          sleep 15s
+      - name: migrate & seed data
+        env:
+          DB_URL: mysql://user:123456@tcp(mysql:3306)/web
+        run: |
+          docker-compose run db-migrate -verbose -path=/migrations/ -database $DB_URL drop -f 
+          docker-compose run db-migrate -verbose -path=/migrations/ -database $DB_URL up 
+      - name: run unit test
+        run: docker-compose run --entrypoint 'go test ./test/...' web-app

@@ -1,5 +1,5 @@
 FROM golang:1.18.5
-WORKDIR /app
+WORKDIR /go_web_be
 COPY ./script/* ./
 COPY . .
 RUN chmod +x ./wait-for-it.sh

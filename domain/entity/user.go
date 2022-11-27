@@ -24,6 +24,9 @@ const (
 )
 
 func (u UserType) IsValid() bool {
+	if len(u) == 0 {
+		return true
+	}
 	return u == UserTypeSuper || u == UserTypeAdmin || u == UserTypeNormal
 }
 

@@ -1,9 +1,10 @@
 //go:build wireinject
 // +build wireinject
 
-package cmd
+package handler
 
 import (
+	"github.com/gin-gonic/gin"
 	"go_web/api/usecase/auth"
 	"go_web/api/usecase/user"
 	"go_web/config"
@@ -32,7 +33,7 @@ func initUserService(db *gorm.DB) service.UserService {
 	return nil
 }
 
-func initAuthService(db *gorm.DB, cfg *config.Config) service.AuthService {
+func InitAuthService(db *gorm.DB, cfg *config.Config) service.AuthService {
 	wire.Build(
 		mysql.NewUserRepo,
 		implement.NewAuthService,
@@ -78,10 +79,48 @@ func initUcGetUser(db *gorm.DB) user.GetUser {
 
 func initUCLogin(db *gorm.DB, cfg *config.Config) auth.Login {
 	wire.Build(
-		initAuthService,
+		InitAuthService,
 		initUserService,
 		auth.NewLogin,
 	)
 
+	return nil
+}
+func InitLoginHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	wire.Build(
+		initUCLogin,
+		doLogin,
+	)
+	return nil
+}
+func InitCreateUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	wire.Build(
+		initUcCreateUser,
+		createUser,
+	)
+	return nil
+}
+
+func InitUpdateUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	wire.Build(
+		initUcUpdateUser,
+		updateUser,
+	)
+	return nil
+}
+
+func InitDeleteUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	wire.Build(
+		initUcDeleteUser,
+		deleteUser,
+	)
+	return nil
+}
+
+func InitGetUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	wire.Build(
+		initUcGetUser,
+		getUser,
+	)
 	return nil
 }

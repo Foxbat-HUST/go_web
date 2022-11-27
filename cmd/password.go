@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"go_web/api/handler"
 	"go_web/config"
 
 	"github.com/spf13/cobra"
@@ -25,7 +26,7 @@ func hash(cmd *cobra.Command, args []string) {
 		return
 	}
 	cfg := config.LoadConfig()
-	authService := initAuthService(nil, cfg)
+	authService := handler.InitAuthService(nil, cfg)
 	hashPassword, err := authService.HashPassword(rawPassword)
 	if err != nil {
 		fmt.Printf("error: %v \n", err)

@@ -11,7 +11,7 @@ import (
 
 var errInvalidPathParam = errors.BadRequestFromStr("invalid path param")
 
-func CreateUser(uc user.CreateUser) func(ctx *gin.Context) {
+func createUser(uc user.CreateUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		input := user.CreateUserInput{}
 		if err := ctx.BindJSON(&input); err != nil {
@@ -28,7 +28,7 @@ func CreateUser(uc user.CreateUser) func(ctx *gin.Context) {
 	}
 }
 
-func UpdateUser(uc user.UpdateUser) func(ctx *gin.Context) {
+func updateUser(uc user.UpdateUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
@@ -52,7 +52,7 @@ func UpdateUser(uc user.UpdateUser) func(ctx *gin.Context) {
 	}
 }
 
-func DeleteUser(uc user.DeleteUser) func(ctx *gin.Context) {
+func deleteUser(uc user.DeleteUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {
@@ -71,7 +71,7 @@ func DeleteUser(uc user.DeleteUser) func(ctx *gin.Context) {
 	}
 }
 
-func GetUser(uc user.GetUser) func(ctx *gin.Context) {
+func getUser(uc user.GetUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		id, err := strconv.Atoi(ctx.Param("id"))
 		if err != nil {

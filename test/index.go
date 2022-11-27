@@ -3,6 +3,7 @@ package test
 import (
 	"bytes"
 	"fmt"
+	"go_web/api/handler"
 	"go_web/api/middleware"
 	"go_web/config"
 	"go_web/domain/entity"
@@ -19,6 +20,33 @@ import (
 
 	"gorm.io/gorm"
 )
+
+type Method string
+
+const (
+	GET    Method = "GET"
+	POST   Method = "POST"
+	PUT    Method = "PUT"
+	DELETE Method = "DELETE"
+)
+
+var actorMap = map[string]entity.User{
+	"admin": {
+		ID:   1,
+		Name: "admin",
+		Type: entity.UserTypeSuper,
+	},
+}
+
+type handlerSignature func(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context)
+
+var handlerFactorMap = map[string]map[Method]handlerSignature{
+	"/api/v1/users/:id": {
+		GET:    handler.InitGetUserHandler,
+		PUT:    handler.InitUpdateUserHandler,
+		DELETE: handler.InitDeleteUserHandler,
+	},
+}
 
 func GetApp() App {
 	cfg := config.LoadConfigForTest()
@@ -41,20 +69,12 @@ func GetApp() App {
 	}
 }
 
-func GetAppWithTx() App {
+func getAppWithTx() App {
 	app := GetApp()
 	return App{
 		Config: app.Config,
 		Db:     app.Db.Begin(),
 	}
-}
-
-var actorMap = map[string]entity.User{
-	"admin": {
-		ID:   1,
-		Name: "admin",
-		Type: entity.UserTypeSuper,
-	},
 }
 
 func createLoginMiddleware(app App) func(*gin.Context) {
@@ -88,15 +108,6 @@ type App struct {
 	Config *config.Config
 }
 
-type Method string
-
-const (
-	GET    Method = "GET"
-	Post   Method = "POST"
-	Put    Method = "PUT"
-	Delete Method = "DELETE"
-)
-
 type Request struct {
 	Url  string
 	Body []byte
@@ -105,44 +116,56 @@ type Scenario struct {
 	Name         string
 	Actor        string
 	Request      Request
-	BeforeTest   func()
+	BeforeTest   func(app App)
 	ExpectedCode int
-	AssertFunc   func(t *testing.T, resRecorder *httptest.ResponseRecorder)
-	AfterTest    func()
+	AssertFunc   func(t *testing.T, app App, resRecorder *httptest.ResponseRecorder)
+	AfterTest    func(app App)
 }
 type TestData struct {
 	Path      string
 	Method    Method
-	Handler   func(ctx *gin.Context)
 	Scenarios []Scenario
 }
 
-func RunTest(t *testing.T, appWithTx App, test TestData) {
+func RunTest(t *testing.T, test TestData) {
 
 	if len(test.Scenarios) == 0 {
 		return
 	}
 
+	appWithTx := getAppWithTx()
+	defer appWithTx.Db.Rollback()
+
 	// create route with middleware & handler
 	router := gin.Default()
 	router.Use(createLoginMiddleware(appWithTx))
-	group := router.Group(test.Path)
+	groupApi := router.Group(test.Path)
+	handlerFactorGrp, ok := handlerFactorMap[test.Path]
+	if !ok {
+		panic(fmt.Sprintf("could not found handler for path: %s", test.Path))
+	}
+	handlerFactor, ok := handlerFactorGrp[test.Method]
+	if !ok {
+		panic(fmt.Sprintf("could not found handler for path %s:%s", test.Method, test.Path))
+	}
+	handler := handlerFactor(appWithTx.Db, appWithTx.Config)
 	switch test.Method {
 	case GET:
-		group.GET("", test.Handler)
-	case Post:
-		group.POST("", test.Handler)
-	case Put:
-		group.PUT("", test.Handler)
-	case Delete:
-		group.DELETE("", test.Handler)
+		groupApi.GET("", handler)
+	case POST:
+		groupApi.POST("", handler)
+	case PUT:
+		groupApi.PUT("", handler)
+	case DELETE:
+		groupApi.DELETE("", handler)
 	default:
 		panic(fmt.Sprintf("un-support http method: %s", test.Method))
 	}
 
+	// do test
 	for _, item := range test.Scenarios {
 		if item.BeforeTest != nil {
-			item.BeforeTest()
+			item.BeforeTest(appWithTx)
 		}
 		request, err := http.NewRequest(string(test.Method), item.Request.Url, bytes.NewBuffer(item.Request.Body))
 		request.Header.Set("Content-Type", "application/json")
@@ -156,11 +179,11 @@ func RunTest(t *testing.T, appWithTx App, test TestData) {
 		assert.Equal(t, item.ExpectedCode, w.Code, item.Name)
 
 		if item.AssertFunc != nil {
-			item.AssertFunc(t, w)
+			item.AssertFunc(t, appWithTx, w)
 		}
 
 		if item.AfterTest != nil {
-			item.AfterTest()
+			item.AfterTest(appWithTx)
 		}
 	}
 

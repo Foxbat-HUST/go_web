@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DoLogin(uc auth.Login, config *config.Config) func(ctx *gin.Context) {
+func doLogin(uc auth.Login, config *config.Config) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
 		input := auth.LoginInput{}
 		if err := ctx.BindJSON(&input); err != nil {

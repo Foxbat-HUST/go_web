@@ -21,7 +21,7 @@ func (l loginMiddleware) Value() func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		token, err := ctx.Cookie("Authenticate")
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, err.Error())
+			ctx.JSON(http.StatusUnauthorized, err.Error())
 			ctx.Abort()
 			return
 		}

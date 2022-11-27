@@ -20,7 +20,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func getApp() App {
+func GetApp() App {
 	cfg := config.LoadConfig()
 	if cfg == nil {
 		panic("fail to load config")
@@ -38,6 +38,14 @@ func getApp() App {
 	return App{
 		Config: cfg,
 		Db:     db,
+	}
+}
+
+func GetAppWithTx() App {
+	app := GetApp()
+	return App{
+		Config: app.Config,
+		Db:     app.Db.Begin(),
 	}
 }
 
@@ -89,60 +97,55 @@ const (
 	Delete Method = "DELETE"
 )
 
+type Request struct {
+	Url  string
+	Body []byte
+}
 type Scenario struct {
 	Name         string
 	Actor        string
-	Request      []byte
-	BeforeTest   func(app App)
+	Request      Request
+	BeforeTest   func()
 	ExpectedCode int
-	AssertFunc   func(app App, t *testing.T, resRecorder *httptest.ResponseRecorder)
-	AfterTest    func(app App)
+	AssertFunc   func(t *testing.T, resRecorder *httptest.ResponseRecorder)
+	AfterTest    func()
 }
 type TestData struct {
-	Url       string
+	Path      string
 	Method    Method
 	Handler   func(ctx *gin.Context)
 	Scenarios []Scenario
 }
 
-func RunTest(t *testing.T, test TestData) {
+func RunTest(t *testing.T, appWithTx App, test TestData) {
 
 	if len(test.Scenarios) == 0 {
 		return
 	}
 
-	var appWithTx = (func() App {
-		app := getApp()
-		return App{
-			Config: app.Config,
-			Db:     app.Db.Begin(),
-		}
-	})()
-
-	defer appWithTx.Db.Rollback()
-
 	// create route with middleware & handler
 	router := gin.Default()
 	router.Use(createLoginMiddleware(appWithTx))
-	group := router.Group(test.Url)
+	group := router.Group(test.Path)
 	switch test.Method {
 	case GET:
-		group.GET(test.Url, test.Handler)
+		group.GET("", test.Handler)
 	case Post:
-		group.POST(test.Url, test.Handler)
+		group.POST("", test.Handler)
 	case Put:
-		group.PUT(test.Url, test.Handler)
+		group.PUT("", test.Handler)
 	case Delete:
-		group.DELETE(test.Url, test.Handler)
+		group.DELETE("", test.Handler)
 	default:
 		panic(fmt.Sprintf("un-support http method: %s", test.Method))
 	}
 
 	for _, item := range test.Scenarios {
 		if item.BeforeTest != nil {
-			item.BeforeTest(appWithTx)
+			item.BeforeTest()
 		}
-		request, err := http.NewRequest(string(test.Method), test.Url, bytes.NewBuffer(item.Request))
+		request, err := http.NewRequest(string(test.Method), item.Request.Url, bytes.NewBuffer(item.Request.Body))
+		request.Header.Set("Content-Type", "application/json")
 		if err != nil {
 			panic(err)
 		}
@@ -153,11 +156,11 @@ func RunTest(t *testing.T, test TestData) {
 		assert.Equal(t, item.ExpectedCode, w.Code, item.Name)
 
 		if item.AssertFunc != nil {
-			item.AssertFunc(appWithTx, t, w)
+			item.AssertFunc(t, w)
 		}
 
 		if item.AfterTest != nil {
-			item.AfterTest(appWithTx)
+			item.AfterTest()
 		}
 	}
 

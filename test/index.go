@@ -118,7 +118,7 @@ type Scenario struct {
 	Request      Request
 	BeforeTest   func(app App)
 	ExpectedCode int
-	AssertFunc   func(t *testing.T, app App, resRecorder *httptest.ResponseRecorder)
+	AssertFunc   func(t *testing.T, app App, response *httptest.ResponseRecorder)
 	AfterTest    func(app App)
 }
 type TestData struct {

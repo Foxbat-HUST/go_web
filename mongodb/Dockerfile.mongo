@@ -1,0 +1,9 @@
+FROM mongo:4.2
+COPY ./.docker/mongodb/initdb.d/ /docker-entrypoint-initdb.d/
+COPY ./.docker/mongodb/mongod.conf /etc/mongod.conf
+COPY ./.docker/mongodb/file.key /auth/file.key
+COPY ./.docker/mongodb/scripts/mongosetup.sh /scripts/mongosetup.sh
+RUN chmod +x /docker-entrypoint-initdb.d/usercreate.sh
+RUN chmod +x /scripts/mongosetup.sh
+RUN chmod 400 /auth/file.key
+RUN chown 999:999 /auth/file.key

@@ -10,7 +10,7 @@ import (
 
 func loadConfig(envFileLoc string) *Config {
 	viper.AddConfigPath(envFileLoc)
-	viper.SetConfigName("app")
+	viper.SetConfigName("/")
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {

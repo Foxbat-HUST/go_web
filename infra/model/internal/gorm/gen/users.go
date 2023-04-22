@@ -1,5 +1,7 @@
 package gen
 
+import "gorm.io/gorm"
+
 type User struct {
 
 	//[ 0] id                                             int                  null: false  primary: true   isArray: false  auto: true   col: int             len: -1      default: []
@@ -8,11 +10,17 @@ type User struct {
 	//[ 1] name                                           varchar(30)          null: true   primary: false  isArray: false  auto: false  col: varchar         len: 30      default: []
 	Name *string `gorm:"column:name;type:varchar;size:30;"`
 
-	//[ 2] age                                            int                  null: true   primary: false  isArray: false  auto: false  col: int             len: -1      default: []
+	//[ 2] type                                           varchar(10)          null: false  primary: false  isArray: false  auto: false  col: varchar         len: 10      default: []
+	Type string `gorm:"column:type;type:varchar;size:10;"`
+
+	//[ 3] age                                            int                  null: true   primary: false  isArray: false  auto: false  col: int             len: -1      default: []
 	Age *uint32 `gorm:"column:age;type:int;"`
 
-	//[ 3] email                                          varchar(30)          null: true   primary: false  isArray: false  auto: false  col: varchar         len: 30      default: []
+	//[ 4] email                                          varchar(30)          null: true   primary: false  isArray: false  auto: false  col: varchar         len: 30      default: []
 	Email *string `gorm:"column:email;type:varchar;size:30;"`
+
+	//[ 5] password                                       varchar(255)         null: false  primary: false  isArray: false  auto: false  col: varchar         len: 255     default: []
+	Password string `gorm:"column:password;type:varchar;size:255;"`
 }
 
 var usersTableInfo = &TableInfo{
@@ -55,6 +63,23 @@ var usersTableInfo = &TableInfo{
 
 		{
 			Index:              2,
+			Name:               "type",
+			Comment:            ``,
+			Notes:              ``,
+			Nullable:           false,
+			DatabaseTypeName:   "varchar",
+			DatabaseTypePretty: "varchar(10)",
+			IsPrimaryKey:       false,
+			IsAutoIncrement:    false,
+			IsArray:            false,
+			ColumnType:         "varchar",
+			ColumnLength:       10,
+			GoFieldName:        "Type",
+			GoFieldType:        "string",
+		},
+
+		{
+			Index:              3,
 			Name:               "age",
 			Comment:            ``,
 			Notes:              ``,
@@ -71,7 +96,7 @@ var usersTableInfo = &TableInfo{
 		},
 
 		{
-			Index:              3,
+			Index:              4,
 			Name:               "email",
 			Comment:            ``,
 			Notes:              ``,
@@ -88,7 +113,24 @@ var usersTableInfo = &TableInfo{
 		},
 
 		{
-			Index:              4,
+			Index:              5,
+			Name:               "password",
+			Comment:            ``,
+			Notes:              ``,
+			Nullable:           false,
+			DatabaseTypeName:   "varchar",
+			DatabaseTypePretty: "varchar(255)",
+			IsPrimaryKey:       false,
+			IsAutoIncrement:    false,
+			IsArray:            false,
+			ColumnType:         "varchar",
+			ColumnLength:       255,
+			GoFieldName:        "Password",
+			GoFieldType:        "string",
+		},
+
+		{
+			Index:              6,
 			Name:               "created_at",
 			Comment:            ``,
 			Notes:              ``,
@@ -105,7 +147,7 @@ var usersTableInfo = &TableInfo{
 		},
 
 		{
-			Index:              5,
+			Index:              7,
 			Name:               "updated_at",
 			Comment:            ``,
 			Notes:              ``,
@@ -122,7 +164,7 @@ var usersTableInfo = &TableInfo{
 		},
 
 		{
-			Index:              6,
+			Index:              8,
 			Name:               "deleted_at",
 			Comment:            ``,
 			Notes:              ``,
@@ -146,7 +188,7 @@ func (u *User) TableName() string {
 }
 
 // BeforeSave invoked before saving, return an error if field is not populated.
-func (u *User) BeforeSave() error {
+func (u *User) BeforeSave(tx *gorm.DB) error {
 	return nil
 }
 

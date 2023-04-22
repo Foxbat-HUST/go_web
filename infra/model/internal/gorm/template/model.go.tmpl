@@ -47,7 +47,7 @@ func ({{.ShortStructName}} *{{.StructName}}) TableName() string {
 }
 
 // BeforeSave invoked before saving, return an error if field is not populated.
-func ({{.ShortStructName}} *{{.StructName}}) BeforeSave() error {
+func ({{.ShortStructName}} *{{.StructName}}) BeforeSave(tx *gorm.DB) error {
 	return nil
 }
 

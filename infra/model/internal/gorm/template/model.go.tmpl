@@ -1,0 +1,66 @@
+package {{.modelPackageName}}
+
+import (
+    "database/sql"
+    "time"
+
+    "github.com/satori/go.uuid"
+    "github.com/guregu/null"
+)
+
+type {{.StructName}} struct {
+		{{$fields := .TableInfo.Fields}}
+    {{range $idx, $item := .TableInfo.CodeFields}}{{if and (ne .ColumnMeta.Name "created_at") (ne .ColumnMeta.Name "updated_at") (ne .ColumnMeta.Name "deleted_at")}}
+		{{index $fields $idx}}{{end}}
+    {{end}}
+}
+
+var {{.TableName}}TableInfo = &TableInfo {
+	Name: "{{.TableName}}",
+	Columns: []*ColumnInfo{
+        {{range .TableInfo.CodeFields}}
+        {
+        	Index: {{.ColumnMeta.Index}},
+        	Name: "{{.ColumnMeta.Name}}",
+        	Comment: `{{.ColumnMeta.Comment}}`,
+        	Notes: `{{.ColumnMeta.Notes}}`,
+        	Nullable: {{.ColumnMeta.Nullable}},
+        	DatabaseTypeName: "{{.ColumnMeta.DatabaseTypeName}}",
+        	DatabaseTypePretty: "{{.ColumnMeta.DatabaseTypePretty}}",
+        	IsPrimaryKey: {{.ColumnMeta.IsPrimaryKey}},
+        	IsAutoIncrement: {{.ColumnMeta.IsAutoIncrement}},
+        	IsArray: {{.ColumnMeta.IsArray}},
+        	ColumnType: "{{.ColumnMeta.ColumnType}}",
+        	ColumnLength: {{.ColumnMeta.ColumnLength}},
+        	GoFieldName: "{{.GoFieldName}}",
+        	GoFieldType: "{{.GoFieldType}}",
+        },
+        {{end}}
+	},
+}
+
+
+
+// TableName sets the insert table name for this struct type
+func ({{.ShortStructName}} *{{.StructName}}) TableName() string {
+	return "{{.TableName}}"
+}
+
+// BeforeSave invoked before saving, return an error if field is not populated.
+func ({{.ShortStructName}} *{{.StructName}}) BeforeSave() error {
+	return nil
+}
+
+// Prepare invoked before saving, can be used to populate fields etc.
+func ({{.ShortStructName}} *{{.StructName}}) Prepare() {
+}
+
+// Validate invoked before performing action, return an error if field is not populated.
+func ({{.ShortStructName}} *{{.StructName}}) Validate(action Action) error {
+    return nil
+}
+
+// TableInfo return table meta data
+func ({{.ShortStructName}} *{{.StructName}}) TableInfo() *TableInfo {
+	return {{.TableName}}TableInfo
+}

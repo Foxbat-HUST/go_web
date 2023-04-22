@@ -17,77 +17,6 @@ services:
         - ./sql:/migrations
         environment:
             DB_URL: mysql://user:123456@tcp(mysql:3306)/web
-    mongo-replica-setup:
-        build:
-            context: ./mongodb
-            dockerfile: Dockerfile.mongo
-        entrypoint: ["bash", "/scripts/mongosetup.sh" ]
-        env_file:
-        - .env
-        depends_on:
-        - mongo1
-        - mongo2
-        - mongo3
-    mongo1:
-        build: 
-            context: ./mongodb
-            dockerfile: Dockerfile.mongo
-        command: ["-f", "/etc/mongod.conf", "--port", "30001", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
-        expose: 
-            - 30001
-        ports: 
-            - 30001:30001 
-        volumes:
-            - /data/db
-            - /var/log/mongodb
-        healthcheck:
-            test: echo 'rs.status().ok' | mongo admin --port 30001 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
-            interval: 30s
-            start_period: 60s
-        env_file:
-            - .env
-
-    mongo2:
-        build: 
-            context: ./mongodb
-            dockerfile: Dockerfile.mongo
-        command: ["-f", "/etc/mongod.conf","--port", "30002", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
-        expose: 
-            - 30002
-        ports: 
-            - 30002:30002  
-        volumes:
-            - /data/db
-            - /var/log/mongodb
-        healthcheck:
-            test: echo 'rs.status().ok' | mongo admin --port 30001 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
-            interval: 30s
-            start_period: 60s
-        env_file:
-            - .env
-        depends_on: 
-            - mongo1
-
-    mongo3:
-        build:
-            context: ./mongodb
-            dockerfile: Dockerfile.mongo
-        command: ["-f", "/etc/mongod.conf", "--port", "30003", "--keyFile", "/auth/file.key", "--replSet", "${MONGO_REPLICA_SET_NAME}", "--bind_ip_all"]
-        expose: 
-            - 30003
-        ports: 
-            - 30003:30003  
-        volumes:
-            - /data/db
-            - /var/log/mongodb
-        healthcheck:
-            test: echo 'rs.status().ok' | mongo admin --port 30001 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep 1
-            interval: 30s
-            start_period: 60s
-        env_file:
-            - .env
-        depends_on: 
-            - mongo1
     web-app:
         build:
             context: ./
@@ -100,4 +29,3 @@ services:
         env_file:
         - .env
         entrypoint: ["./wait-for-it.sh","mysql:3306","--timeout=60","--","/web-app","server"]
-  

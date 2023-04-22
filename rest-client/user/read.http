@@ -1,2 +1,2 @@
-GET  http://localhost:8080/api/v1/users/1 HTTP/1.1
-Cookie: Authenticate=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJFbWFpbCI6ImFucHFAZ21haWwuY29tIiwidXNlclR5cGUiOiJzdXBlciIsImlzcyI6ImdvX3dlYiIsImV4cCI6MTY2NDcyMjY0MCwiaWF0IjoxNjY0NzE5MDQwLCJqdGkiOiIwZDIwOTgyYi0yNTc3LTQ4ZjQtYWFkMy1kY2QwMGQwMWY0ZjgifQ.hm9g_LaBoMdUIK2hdRSTZHWoIkP0cDWqhYTJMEc-xzfjPBw5mCysx8ct6cVqvDsi86QFBG2b2bGXeuXfInglwQ; Path=/; Max-Age=3600; HttpOnly; Secure
+GET  http://localhost:8080/api/v1/users/2 HTTP/1.1
+Cookie: Authenticate=

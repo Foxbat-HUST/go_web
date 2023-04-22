@@ -1,0 +1,20 @@
+{
+  "mappings": [
+    {
+      "sql_type": "int",
+      "go_type": "uint32",
+      "go_nullable_type": "*uint32",
+      "swagger_type": "int"
+    }, {
+      "sql_type": "varchar",
+      "go_type": "string",
+      "go_nullable_type": "*string",
+      "swagger_type": "int"
+    }, {
+      "sql_type": "datetime",
+      "go_type": "time.Time",
+      "go_nullable_type": "*time.Time",
+      "swagger_type": "string"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import (
 	"go_web/domain/entity"
 	"go_web/domain/repository"
 	"go_web/errors"
-	"go_web/infra/repository/mysql/model"
+	"go_web/infra/model"
 
 	"gorm.io/gorm"
 )

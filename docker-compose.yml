@@ -26,6 +26,7 @@ services:
         image: web-app
         depends_on:
         - mysql
+        volumes:
+          - ./:/go_web_be
         env_file:
         - .env
-        entrypoint: ["./wait-for-it.sh","mysql:3306","--timeout=60","--","/web-app","server"]

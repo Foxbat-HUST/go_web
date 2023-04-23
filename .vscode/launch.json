@@ -12,6 +12,7 @@
             "mode": "auto",
             "program": "${cwd}",
             "args": ["server"],
+            //"args": ["migrate"],
             //"args": ["bcrypt", "-r=123456"],
             "envFile": "${cwd}/debug.env"
         }

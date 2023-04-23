@@ -27,6 +27,6 @@ services:
         depends_on:
         - mysql
         volumes:
-          - ./:/go_web_be
+          - ./:/app
         env_file:
         - .env

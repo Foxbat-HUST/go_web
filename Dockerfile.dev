@@ -1,6 +1,4 @@
 FROM golang:1.18.5
-WORKDIR /go_web_be
-COPY ./script/* ./
-COPY . .
-RUN chmod +x ./wait-for-it.sh
-RUN go build -o /web-app
+WORKDIR /app
+RUN go install github.com/cosmtrek/air@latest
+CMD [ "air", "server" ]

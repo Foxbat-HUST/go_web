@@ -17,6 +17,15 @@ services:
         - ./sql:/migrations
         environment:
             DB_URL: mysql://user:123456@tcp(mysql:3306)/web
+    nginx:
+        image: nginx:1.23.3
+        ports:
+        - 80:80
+        volumes:
+          - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - web-app
+            - frontend
     web-app:
         build:
             context: ./
@@ -30,3 +39,13 @@ services:
           - ./:/app
         env_file:
         - .env
+    frontend:
+        build:
+            context: ../go_web_fe/
+            dockerfile: Dockerfile
+        volumes:
+          - ../go_web_fe/:/app
+        expose:
+          - 8080
+        working_dir: /app
+        command: ["npm", "run", "dev", "--", "--host"]

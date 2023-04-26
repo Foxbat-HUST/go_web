@@ -77,7 +77,7 @@ func initUcGetUser(db *gorm.DB) user.GetUser {
 	return nil
 }
 
-func initUCLogin(db *gorm.DB, cfg *config.Config) auth.Login {
+func initUcLogin(db *gorm.DB, cfg *config.Config) auth.Login {
 	wire.Build(
 		InitAuthService,
 		initUserService,
@@ -86,9 +86,18 @@ func initUCLogin(db *gorm.DB, cfg *config.Config) auth.Login {
 
 	return nil
 }
+
+func initUcAuthInit(db *gorm.DB, cfg *config.Config) auth.AuthInit {
+	wire.Build(
+		InitAuthService,
+		auth.NewAuthInit,
+	)
+
+	return nil
+}
 func InitLoginHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
 	wire.Build(
-		initUCLogin,
+		initUcLogin,
 		doLogin,
 	)
 	return nil
@@ -121,6 +130,14 @@ func InitGetUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) 
 	wire.Build(
 		initUcGetUser,
 		getUser,
+	)
+	return nil
+}
+
+func InitAuthInitHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	wire.Build(
+		initUcAuthInit,
+		doAuthInit,
 	)
 	return nil
 }

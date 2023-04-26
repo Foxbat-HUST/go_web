@@ -2,17 +2,14 @@ package entity
 
 import (
 	"go_web/errors"
-	"time"
 )
 
 type User struct {
-	ID        uint32
-	Name      string   `validate:"required"`
-	Age       uint16   `validate:"required"`
-	Email     string   `validate:"required,email"`
-	Type      UserType `validate:"userType"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID    uint32   `json:"id"`
+	Name  string   `json:"name" validate:"required"`
+	Age   uint16   `json:"age" validate:"required"`
+	Email string   `json:"email" validate:"required,email"`
+	Type  UserType `json:"type" validate:"userType"`
 }
 
 type UserType string

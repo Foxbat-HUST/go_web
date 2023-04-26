@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func doLogin(uc auth.Login, config *config.Config) func(ctx *gin.Context) {
+func doLogin(uc auth.Login, config *config.Config) func(*gin.Context) {
 	return func(ctx *gin.Context) {
 		input := auth.LoginInput{}
 		if err := ctx.BindJSON(&input); err != nil {
@@ -21,9 +21,28 @@ func doLogin(uc auth.Login, config *config.Config) func(ctx *gin.Context) {
 			return
 		}
 
-		setCookie(ctx, "Authenticate", output.Token, config.Auth.TokenExpireSeconds)
+		setCookie(ctx, config.Auth.CookiesName, output.Token, config.Auth.TokenExpireSeconds)
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "authenticated",
 		})
+	}
+}
+func doAuthInit(uc auth.AuthInit, config *config.Config) func(*gin.Context) {
+	return func(ctx *gin.Context) {
+		token, err := ctx.Cookie(config.Auth.CookiesName)
+		if err != nil {
+			ctx.JSON(http.StatusUnauthorized, err.Error())
+			ctx.Abort()
+			return
+		}
+
+		data, err := uc.Exec(auth.AuthInitInput{
+			Token: token,
+		})
+		if err != nil {
+			handleErr(ctx, err)
+			return
+		}
+		ctx.JSON(http.StatusOK, data)
 	}
 }

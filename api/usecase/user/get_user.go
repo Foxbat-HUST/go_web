@@ -11,12 +11,12 @@ type GetUserInput struct {
 	ID uint32
 }
 
-type GetUserOuput struct {
+type GetUserOutput struct {
 	entity.User
 }
 
 type GetUser interface {
-	Exec(input GetUserInput) (ouput *GetUserOuput, err error)
+	Exec(input GetUserInput) (output *GetUserOutput, err error)
 }
 
 type getUser struct {
@@ -31,11 +31,11 @@ func NewGetUser(db *gorm.DB, userService service.UserService) GetUser {
 	}
 }
 
-func (c *getUser) Exec(input GetUserInput) (*GetUserOuput, error) {
+func (c *getUser) Exec(input GetUserInput) (*GetUserOutput, error) {
 	user, err := c.userService.GetByID(input.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &GetUserOuput{*user}, nil
+	return &GetUserOutput{*user}, nil
 }

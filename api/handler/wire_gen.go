@@ -112,6 +112,12 @@ func InitAuthInitHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context)
 
 func initUcListUser(db *gorm.DB) user.ListUser {
 	userService := initUserService(db)
-	listUser := user.NewListUser(userService)
-	return listUser
+	userListUser := user.NewListUser(userService)
+	return userListUser
+}
+
+func InitListUserHandler(db *gorm.DB) func(ctx *gin.Context) {
+	userListUser := initUcListUser(db)
+	v := listUser(userListUser)
+	return v
 }

@@ -89,3 +89,30 @@ func getUser(uc user.GetUser) func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, output)
 	}
 }
+
+func listUser(uc user.ListUser) func(*gin.Context) {
+	return func(ctx *gin.Context) {
+		var queryParam struct {
+			PageIndex   int `form:"p"`
+			ItemPerPage int `form:"l"`
+		}
+
+		err := ctx.BindQuery(&queryParam)
+		if err != nil {
+			handleErr(ctx, errors.BadRequest(err))
+			return
+		}
+
+		output, err := uc.Exec(user.ListUserInput{
+			PageIndex:   queryParam.PageIndex,
+			ItemPerPage: queryParam.ItemPerPage,
+		})
+
+		if err != nil {
+			handleErr(ctx, err)
+			return
+		}
+
+		ctx.JSON(http.StatusOK, output)
+	}
+}

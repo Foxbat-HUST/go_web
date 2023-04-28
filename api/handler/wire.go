@@ -150,3 +150,11 @@ func initUcListUser(db *gorm.DB) user.ListUser {
 
 	return nil
 }
+
+func InitListUserHandler(db *gorm.DB) func(ctx *gin.Context) {
+	wire.Build(
+		initUcListUser,
+		listUser,
+	)
+	return nil
+}

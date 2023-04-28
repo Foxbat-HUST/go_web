@@ -80,6 +80,7 @@ func _initRouter(app app) {
 		apiV1.Use(app.CreateMiddleware(middleware.LoginMiddleware))
 		userGrp := apiV1.Group("/users")
 		{
+			userGrp.GET("", handler.InitListUserHandler(app.db))
 			userGrp.POST("", handler.InitCreateUserHandler(app.db, app.config))
 			userGrp.PUT("/:id", handler.InitUpdateUserHandler(app.db, app.config))
 			userGrp.GET("/:id", handler.InitGetUserHandler(app.db, app.config))

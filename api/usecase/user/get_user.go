@@ -3,8 +3,6 @@ package user
 import (
 	"go_web/domain/entity"
 	"go_web/domain/service"
-
-	"gorm.io/gorm"
 )
 
 type GetUserInput struct {
@@ -20,13 +18,11 @@ type GetUser interface {
 }
 
 type getUser struct {
-	db          *gorm.DB
 	userService service.UserService
 }
 
-func NewGetUser(db *gorm.DB, userService service.UserService) GetUser {
+func NewGetUser(userService service.UserService) GetUser {
 	return &getUser{
-		db:          db,
 		userService: userService,
 	}
 }

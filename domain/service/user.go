@@ -6,6 +6,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type GetListOption struct {
+	PageIndex   int
+	ItemPerPage int
+}
+
 type UserService interface {
 	WithTx(db *gorm.DB) UserService
 	GetByID(ID uint32) (result *entity.User, err error)
@@ -15,4 +20,5 @@ type UserService interface {
 	Update(ID uint32, user entity.User) (result *entity.User, err error)
 	ValidateCreate(user entity.User) error
 	ValidateUpdate(user entity.User) error
+	GetList(GetListOption) ([]*entity.User, int64, error)
 }

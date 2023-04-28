@@ -57,7 +57,7 @@ func initUcDeleteUser(db *gorm.DB) user.DeleteUser {
 
 func initUcGetUser(db *gorm.DB) user.GetUser {
 	userService := initUserService(db)
-	userGetUser := user.NewGetUser(db, userService)
+	userGetUser := user.NewGetUser(userService)
 	return userGetUser
 }
 
@@ -108,4 +108,10 @@ func InitAuthInitHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context)
 	authInit := initUcAuthInit(db, cfg)
 	v := doAuthInit(authInit, cfg)
 	return v
+}
+
+func initUcListUser(db *gorm.DB) user.ListUser {
+	userService := initUserService(db)
+	listUser := user.NewListUser(userService)
+	return listUser
 }

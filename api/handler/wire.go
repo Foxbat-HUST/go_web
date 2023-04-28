@@ -141,3 +141,12 @@ func InitAuthInitHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context)
 	)
 	return nil
 }
+
+func initUcListUser(db *gorm.DB) user.ListUser {
+	wire.Build(
+		initUserService,
+		user.NewListUser,
+	)
+
+	return nil
+}

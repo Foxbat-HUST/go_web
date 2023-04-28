@@ -13,12 +13,12 @@ type CreateUserInput struct {
 	Email string `json:"email"`
 }
 
-type CreateUserOuput struct {
+type CreateUserOutput struct {
 	entity.User
 }
 
 type CreateUser interface {
-	Exec(input CreateUserInput) (ouput *CreateUserOuput, err error)
+	Exec(input CreateUserInput) (output *CreateUserOutput, err error)
 }
 
 type createUser struct {
@@ -33,7 +33,7 @@ func NewCreateUser(db *gorm.DB, userService service.UserService) CreateUser {
 	}
 }
 
-func (c *createUser) Exec(input CreateUserInput) (*CreateUserOuput, error) {
+func (c *createUser) Exec(input CreateUserInput) (*CreateUserOutput, error) {
 	user := entity.User{
 		Name:  input.Name,
 		Age:   input.Age,
@@ -56,5 +56,5 @@ func (c *createUser) Exec(input CreateUserInput) (*CreateUserOuput, error) {
 		return nil, err
 	}
 
-	return &CreateUserOuput{createdUser}, nil
+	return &CreateUserOutput{createdUser}, nil
 }

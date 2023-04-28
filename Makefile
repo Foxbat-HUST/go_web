@@ -4,9 +4,7 @@ gen_model:
 	gen --sqltype=mysql \
    	--connstr "$(MYSQL_USER):$(MYSQL_PASSWORD)@tcp(localhost:$(MYSQL_PORT))/$(MYSQL_DB)" \
 		--database=$(MYSQL_DB)  \
-		--table=$(table) \
 		--model=gen \
-		--model_naming=$(model) \
 		--exclude=schema_migrations \
 		--templateDir=./infra/model/internal/gorm/template \
 		--mapping=./infra/model/internal/gorm/template/mapping.json \

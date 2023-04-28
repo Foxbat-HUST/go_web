@@ -11,13 +11,13 @@ import (
 
 type userRepoImpl struct {
 	db *gorm.DB
-	repository.BaseRepo[entity.User]
+	repository.BaseRepo[model.User, entity.User]
 }
 
 func NewUserRepo(db *gorm.DB) repository.UserRepo {
 	return &userRepoImpl{
 		db,
-		newBaseRepoImpl(db),
+		newBaseRepoImpl[model.User, entity.User](db),
 	}
 }
 
@@ -50,18 +50,18 @@ func (e *userRepoImpl) FindAuthUserByEmail(email string) (*entity.AuthUser, erro
 }
 
 func (e *userRepoImpl) FindByEmail(email string) (*entity.User, error) {
-	var rawResult model.User
-	if err := e.db.First(&rawResult, "email = ?", email).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, errors.NotFound(err)
-		}
-		return nil, err
-	}
-
-	result := &entity.User{}
-	if err := copy(result, &rawResult); err != nil {
+	result, err := e.FindOneByConds("email = ?", email)
+	if err != nil {
 		return nil, err
 	}
 
 	return result, nil
+}
+
+func (e *userRepoImpl) newModel() *model.User {
+	return &model.User{}
+}
+
+func (e *userRepoImpl) newEntity() *entity.User {
+	return &entity.User{}
 }

@@ -7,7 +7,8 @@ import (
 )
 
 type Model interface {
-	User
+	Columns() map[string]bool
+	User | Job
 }
 
 type BaseModel struct {

@@ -73,12 +73,14 @@ func _initRouter(app app) {
 	auth := router.Group("/auth")
 	{
 		auth.POST("/login", handler.InitLoginHandler(app.db, app.config))
+		auth.GET("/init", handler.InitAuthInitHandler(app.db, app.config))
 	}
 	apiV1 := router.Group("/api/v1")
 	{
 		apiV1.Use(app.CreateMiddleware(middleware.LoginMiddleware))
 		userGrp := apiV1.Group("/users")
 		{
+			userGrp.GET("", handler.InitListUserHandler(app.db))
 			userGrp.POST("", handler.InitCreateUserHandler(app.db, app.config))
 			userGrp.PUT("/:id", handler.InitUpdateUserHandler(app.db, app.config))
 			userGrp.GET("/:id", handler.InitGetUserHandler(app.db, app.config))

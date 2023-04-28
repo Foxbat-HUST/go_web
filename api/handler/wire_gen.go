@@ -57,19 +57,25 @@ func initUcDeleteUser(db *gorm.DB) user.DeleteUser {
 
 func initUcGetUser(db *gorm.DB) user.GetUser {
 	userService := initUserService(db)
-	userGetUser := user.NewGetUser(db, userService)
+	userGetUser := user.NewGetUser(userService)
 	return userGetUser
 }
 
-func initUCLogin(db *gorm.DB, cfg *config.Config) auth.Login {
+func initUcLogin(db *gorm.DB, cfg *config.Config) auth.Login {
 	authService := InitAuthService(db, cfg)
 	userService := initUserService(db)
 	login := auth.NewLogin(authService, userService)
 	return login
 }
 
+func initUcAuthInit(db *gorm.DB, cfg *config.Config) auth.AuthInit {
+	authService := InitAuthService(db, cfg)
+	authInit := auth.NewAuthInit(authService)
+	return authInit
+}
+
 func InitLoginHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
-	login := initUCLogin(db, cfg)
+	login := initUcLogin(db, cfg)
 	v := doLogin(login, cfg)
 	return v
 }
@@ -95,5 +101,23 @@ func InitDeleteUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Contex
 func InitGetUserHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
 	userGetUser := initUcGetUser(db)
 	v := getUser(userGetUser)
+	return v
+}
+
+func InitAuthInitHandler(db *gorm.DB, cfg *config.Config) func(ctx *gin.Context) {
+	authInit := initUcAuthInit(db, cfg)
+	v := doAuthInit(authInit, cfg)
+	return v
+}
+
+func initUcListUser(db *gorm.DB) user.ListUser {
+	userService := initUserService(db)
+	userListUser := user.NewListUser(userService)
+	return userListUser
+}
+
+func InitListUserHandler(db *gorm.DB) func(ctx *gin.Context) {
+	userListUser := initUcListUser(db)
+	v := listUser(userListUser)
 	return v
 }

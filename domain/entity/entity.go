@@ -1,5 +1,5 @@
 package entity
 
 type Entity interface {
-	User
+	User | Job
 }

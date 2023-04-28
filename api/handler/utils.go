@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"go_web/domain/entity"
 	"go_web/errors"
 	"net/http"
 
@@ -19,4 +20,13 @@ func handleErr(ctx *gin.Context, e error) {
 
 func setCookie(ctx *gin.Context, name, value string, age int) {
 	ctx.SetCookie(name, value, age, "", "", true, true)
+}
+
+func getAuthUser(ctx *gin.Context) *entity.User {
+	val, exist := ctx.Get("authUser")
+	if !exist {
+		return nil
+	}
+
+	return val.(*entity.User)
 }

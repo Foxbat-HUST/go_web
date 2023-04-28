@@ -42,11 +42,6 @@ func LoadConfigForTest() *Config {
 	return loadConfig(envFileLoc)
 }
 
-type Auth struct {
-	Secret             string `mapstructure:"AUTH_SECRET"`
-	TokenExpireSeconds int    `mapstructure:"AUTH_TOKEN_EXPIRE_SECONDS"`
-	TokenIssuer        string `mapstructure:"AUTH_TOKEN_ISSUER"`
-}
 type Config struct {
 	Mysql struct {
 		Host     string `mapstructure:"MYSQL_HOST"`
@@ -60,6 +55,7 @@ type Config struct {
 		Secret             string `mapstructure:"AUTH_SECRET"`
 		TokenExpireSeconds int    `mapstructure:"AUTH_TOKEN_EXPIRE_SECONDS"`
 		TokenIssuer        string `mapstructure:"AUTH_TOKEN_ISSUER"`
+		CookiesName        string `mapstructure:"COOKIES_NAME"`
 	} `mapstructure:",squash"`
 
 	Redis struct {

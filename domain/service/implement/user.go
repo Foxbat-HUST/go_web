@@ -74,3 +74,10 @@ func (u *userServiceImpl) ValidateUpdate(user entity.User) error {
 
 	return nil
 }
+
+func (u *userServiceImpl) GetList(option service.GetListOption) ([]*entity.User, int64, error) {
+	return u.userRepo.GetList(repository.GetListOptions{
+		PageIndex:   &option.PageIndex,
+		ItemPerPage: &option.ItemPerPage,
+	})
+}

@@ -10,11 +10,11 @@ type DeleteUserInput struct {
 	ID uint32
 }
 
-type DeleteUserOuput struct {
+type DeleteUserOutput struct {
 }
 
 type DeleteUser interface {
-	Exec(input DeleteUserInput) (ouput *DeleteUserOuput, err error)
+	Exec(input DeleteUserInput) (output *DeleteUserOutput, err error)
 }
 
 type deleteUser struct {
@@ -29,7 +29,7 @@ func NewDeleteUser(db *gorm.DB, userService service.UserService) DeleteUser {
 	}
 }
 
-func (c *deleteUser) Exec(input DeleteUserInput) (*DeleteUserOuput, error) {
+func (c *deleteUser) Exec(input DeleteUserInput) (*DeleteUserOutput, error) {
 
 	if _, err := c.userService.GetByID(input.ID); err != nil {
 		return nil, err
@@ -44,5 +44,5 @@ func (c *deleteUser) Exec(input DeleteUserInput) (*DeleteUserOuput, error) {
 		return nil, err
 	}
 
-	return &DeleteUserOuput{}, nil
+	return &DeleteUserOutput{}, nil
 }

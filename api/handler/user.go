@@ -3,8 +3,8 @@ package handler
 import (
 	"go_web/api/usecase/user"
 	"go_web/errors"
+	"go_web/utils/number"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,7 +30,7 @@ func createUser(uc user.CreateUser) func(ctx *gin.Context) {
 
 func updateUser(uc user.UpdateUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		id, err := strconv.Atoi(ctx.Param("id"))
+		id, err := number.ParseInt[uint32](ctx.Param("id"))
 		if err != nil {
 			handleErr(ctx, errInvalidPathParam)
 		}
@@ -54,7 +54,7 @@ func updateUser(uc user.UpdateUser) func(ctx *gin.Context) {
 
 func deleteUser(uc user.DeleteUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		id, err := strconv.Atoi(ctx.Param("id"))
+		id, err := number.ParseInt[uint32](ctx.Param("id"))
 		if err != nil {
 			handleErr(ctx, errInvalidPathParam)
 		}
@@ -73,7 +73,7 @@ func deleteUser(uc user.DeleteUser) func(ctx *gin.Context) {
 
 func getUser(uc user.GetUser) func(ctx *gin.Context) {
 	return func(ctx *gin.Context) {
-		id, err := strconv.Atoi(ctx.Param("id"))
+		id, err := number.ParseInt[uint32](ctx.Param("id"))
 		if err != nil {
 			handleErr(ctx, errInvalidPathParam)
 		}

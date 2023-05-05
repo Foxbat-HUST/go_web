@@ -41,7 +41,7 @@ func updateUser(uc user.UpdateUser) func(ctx *gin.Context) {
 			return
 		}
 
-		input.ID = uint32(id)
+		input.ID = id
 		output, err := uc.Exec(input)
 		if err != nil {
 			handleErr(ctx, err)
@@ -60,7 +60,7 @@ func deleteUser(uc user.DeleteUser) func(ctx *gin.Context) {
 		}
 
 		output, err := uc.Exec(user.DeleteUserInput{
-			ID: uint32(id),
+			ID: id,
 		})
 		if err != nil {
 			handleErr(ctx, err)
@@ -79,7 +79,7 @@ func getUser(uc user.GetUser) func(ctx *gin.Context) {
 		}
 
 		output, err := uc.Exec(user.GetUserInput{
-			ID: uint32(id),
+			ID: id,
 		})
 		if err != nil {
 			handleErr(ctx, err)

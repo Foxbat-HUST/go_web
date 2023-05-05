@@ -90,7 +90,7 @@ func (e *baseRepo[M, E]) Update(ID uint32, params E) (*E, error) {
 		return nil, err
 	}
 
-	if err := e.db.Save(model).Error; err != nil {
+	if err := e.db.Save(&model).Error; err != nil {
 		return nil, err
 	}
 
